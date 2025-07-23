@@ -3,6 +3,6 @@
 #include "GameEngine.h"
 
 int main() {
-    GameEngine g("assests.txt");
+    GameEngine g("assets.txt");
     g.run();
 }
