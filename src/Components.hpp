@@ -5,7 +5,6 @@
 #include"Vec2.hpp"
 
 class Component {
-
     public:
     bool exists = false;
 };
@@ -53,13 +52,14 @@ class CBoundingBox : public Component {
     CBoundingBox(const Vec2f& s) : size(s), halfSize(s.x/2,s.y/2) {}
 };
 
-class CAnimation : public Component {
-    public: 
-    Animation animation;
-    bool repeat = false;
-    CAnimation() = default;
-    CAnimation(const Animation& animation, bool r) : animation(animation), repeat(r) {}
-};
+//TODO: use the below component when Animations.hpp is implemented
+// class CAnimation : public Component {
+//     public: 
+//     Animation animation;
+//     bool repeat = false;
+//     CAnimation() = default;
+//     CAnimation(const Animation& animation, bool r) : animation(animation), repeat(r) {}
+// };
 
 class CGravity : public Component {
     public:

@@ -4,9 +4,6 @@
 #include<sstream>
 
 class Action {
-
-    private:
-
     std::string m_name = "NONE" ;
     std::string m_type = "NONE" ;
 

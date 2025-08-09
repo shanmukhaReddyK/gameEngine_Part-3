@@ -3,26 +3,36 @@
 #include<string>
 #include<map>
 
+#include"Scene.h"
+#include"imgui.h"
+#include"imgui-SFML.h"
+
 class GameEngine {
-    private:
+    sf::RenderWindow                                m_window;    //the window we will draw
+    std::map<std::string,std::shared_ptr<Scene>>    m_sceneMap;
+    Assets                                          m_assets;
+    std::string                                     m_currentScene;
+    bool                                            m_running;
 
-    sf::RenderWindow                m_window;    //the window we will draw
-    std::map<std::string,Scene>     m_scenes;
-    Assets                          m_assets;
-
-    std::string                     m_Currentscene;
-    bool                            m_running;
-
-    void init();
+    void init(const std::string& assetConfig);
 
     public:
 
     void update();
     void run();
     void quit();
-    void changeScene<T>();
+
+   
+    void changeScene(const std::string& sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene = false) {
+
+    };//TODO
     void sUserInput();
+
+    bool isRunning();
     
     Assets& getAssets();
-    sf::Window& window(); 
-}
+    sf::RenderWindow& window();
+    std::shared_ptr<Scene> currentScene();
+
+    GameEngine(const std::string& assetConfig);
+};

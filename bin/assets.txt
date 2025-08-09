@@ -1,0 +1,4 @@
+Texture TexBackgroundMap images/Tilemap/backgrounds.png
+Texture TexCharacterMap images/Tilemap/characters.png
+Texture TexTileMap images/Tilemap/tiles.png
+Font Tech fonts/tech.ttf
