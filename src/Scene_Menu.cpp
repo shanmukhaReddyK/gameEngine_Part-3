@@ -29,7 +29,7 @@ void Scene_Menu::init() {
 }
 
 void Scene_Menu::update() {
-    m_entityManager.Update();
+    m_entityManager.update();
 }
 
 void Scene_Menu::sDoAction(const Action& action) {

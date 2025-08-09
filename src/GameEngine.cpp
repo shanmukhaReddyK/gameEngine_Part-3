@@ -1,5 +1,4 @@
 #include"GameEngine.h"
-#include"Assets.hpp"
 #include"Scene_Menu.h"
 #include"Scene_Play.h"
 
@@ -20,12 +19,19 @@ void GameEngine::init(const std::string& assetConfig){
     ImGui::GetStyle().ScaleAllSizes(2.0f);
     ImGui::GetIO().FontGlobalScale=2.0f;
 
-    changeScene("MENU", std::make_shared<Scene_Menu>(*this));//TODO
+    changeScene("MENU", std::make_shared<Scene_Menu>(*this));
 }
 
-// template <typename T, typename... TArgs>
-GameEngine::T& changeScene(TArgs&&... Args){
-
+void GameEngine::changeScene(const std::string& sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene) {  //? There might be some changes in this implementation
+    if(endCurrentScene) {
+        m_sceneMap.erase(m_currentScene);
+    }
+    
+    m_currentScene=sceneName;
+    
+    if(m_sceneMap.find(sceneName)==m_sceneMap.end()) {
+        m_sceneMap[sceneName]==scene;
+    }
 }
 
 std::shared_ptr<Scene> GameEngine::currentScene(){
@@ -44,6 +50,11 @@ void GameEngine::run() {
     while(isRunning()) {
         update();
     }
+}
+
+//Calls the update function of the current scene
+void GameEngine::update() {
+    currentScene()->update();
 }
 
 Assets& GameEngine::getAssets(){ //TODO: check weather should i use const or not
@@ -83,4 +94,8 @@ void GameEngine::sUserInput() {
         }
         
     }
+}
+
+void GameEngine::quit() {
+    m_running=false;
 }

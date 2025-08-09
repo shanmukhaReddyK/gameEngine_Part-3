@@ -3,6 +3,7 @@
 #include<string>
 #include<map>
 
+#include"Assets.hpp"
 #include"Scene.h"
 #include"imgui.h"
 #include"imgui-SFML.h"
@@ -20,12 +21,10 @@ class GameEngine {
 
     void update();
     void run();
-    void quit();
+    void quit(); //TODO
 
    
-    void changeScene(const std::string& sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene = false) {
-
-    };//TODO
+    void changeScene(const std::string& sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene = false);
     void sUserInput();
 
     bool isRunning();

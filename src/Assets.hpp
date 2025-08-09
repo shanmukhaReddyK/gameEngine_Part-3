@@ -5,6 +5,7 @@
 #include<map>
 #include<string>
 #include<iostream>
+#include<fstream>
 
 #include<SFML/Audio.hpp>
 #include<SFML/Graphics.hpp>
@@ -17,7 +18,40 @@ class Assets {
     //std::map<std::string,Animations>        m_animations
     
     public:
-    void loadFromFile(const std::string& assetConfig) {
+    void loadFromfile(const std::string& assetConfig) {
+        std::ifstream fin(assetConfig);
+    
+        if(!fin.is_open()) {
+            std::cerr<<"Error opening file "<< assetConfig <<"\n";
+        }
+
+        std::string word;
+
+        while(fin >> word) {
+            if(word == "Texture") {
+                std::string name,path;
+                fin >> name >> path;
+                addTexture(name,path);
+            }
+
+            if(word == "Font") {
+                std::string name,path;
+                fin >> name >> path;
+                addFont(name,path);
+            }
+
+            // if(word == "Sound") {
+            //     std::string name,path;
+            //     fin >> name >> path;
+            //     addTexture(name,path);
+            // }
+
+            // if(word == "Animation") {
+            //     std::string name,path;
+            //     fin >> name >> path;
+            //     addAnimation(name,path);
+            // }
+        }
 
     }
 

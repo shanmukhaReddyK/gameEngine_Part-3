@@ -1,7 +1,6 @@
 #pragma once
 
 #include"Animation.hpp"
-#include"Assets.hpp"
 #include"Vec2.hpp"
 
 class Component {
