@@ -13,6 +13,7 @@ INCLUDES  := -I./src -I ./src/imgui
 # LDFLAGS   := -O3 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lGL
 
 SRC_FILES := $(wildcard src/*.cpp src/imgui/*.cpp)
+SRC_FILES := $(filter-out src/Scene_Play.cpp, $(SRC_FILES))
 OBJ_FILES := $(SRC_FILES:.cpp=.o)
 
 DEP_FILES := $(SRC_FILES:.cpp=.d)

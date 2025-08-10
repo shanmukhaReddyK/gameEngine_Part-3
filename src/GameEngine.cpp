@@ -1,6 +1,6 @@
 #include"GameEngine.h"
 #include"Scene_Menu.h"
-#include"Scene_Play.h"
+// #include"Scene_Play.h"
 
 #include<iostream>
 
@@ -30,7 +30,7 @@ void GameEngine::changeScene(const std::string& sceneName, std::shared_ptr<Scene
     m_currentScene=sceneName;
     
     if(m_sceneMap.find(sceneName)==m_sceneMap.end()) {
-        m_sceneMap[sceneName]==scene;
+        m_sceneMap[sceneName]=scene;
     }
 }
 
@@ -55,6 +55,7 @@ void GameEngine::run() {
 //Calls the update function of the current scene
 void GameEngine::update() {
     currentScene()->update();
+    sUserInput();
 }
 
 Assets& GameEngine::getAssets(){ //TODO: check weather should i use const or not

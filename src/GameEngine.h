@@ -7,6 +7,7 @@
 #include"imgui.h"
 #include"imgui-SFML.h"
 
+class Scene;
 class GameEngine {
     sf::RenderWindow                                m_window;    //the window we will draw
     std::map<std::string,std::shared_ptr<Scene>>    m_sceneMap;

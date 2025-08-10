@@ -12,7 +12,7 @@
 
 class Assets {
     std::map<std::string, sf::Texture>       m_textures;
-    std::map<std::string, sf::Sound>         m_sounds;
+    // std::map<std::string, sf::Sound>         m_sounds;
     std::map<std::string, sf::Font>          m_fonts;
     //TODO: declare below when animations is done
     //std::map<std::string,Animations>        m_animations
@@ -65,10 +65,10 @@ class Assets {
         }
     }
 
-    void addSound(const std::string& name, const std::string& path){
-        //TODO: Implement sound
-        std::cout<<"Audio still in progress\n";
-    }
+    // void addSound(const std::string& name, const std::string& path){
+    //     //TODO: Implement sound
+    //     std::cout<<"Audio still in progress\n";
+    // }
 
     void addFont(const std::string& name, const std::string& path){
         if(m_fonts.find(name)==m_fonts.end())
@@ -86,9 +86,9 @@ class Assets {
         return m_textures[name];
     }
 
-    sf::Sound& getSound(const std::string& name){
-        return m_sounds[name];
-    }
+    // sf::Sound& getSound(const std::string& name){
+    //     return m_sounds[name];
+    // }
 
     sf::Font& getFont(const std::string& name){
         return m_fonts[name];

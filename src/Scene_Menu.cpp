@@ -3,7 +3,7 @@
 #include"Components.hpp"
 #include"GameEngine.h"
 #include"Scene_Menu.h"
-#include"Scene_Play.h"
+// #include"Scene_Play.h"
 
 Scene_Menu::Scene_Menu(GameEngine& gameEngine) : Scene(gameEngine) {
     init();
@@ -30,6 +30,7 @@ void Scene_Menu::init() {
 
 void Scene_Menu::update() {
     m_entityManager.update();
+    sRender();
 }
 
 void Scene_Menu::sDoAction(const Action& action) {
@@ -70,7 +71,7 @@ void Scene_Menu::sRender() {
     for(size_t i =0; i<m_menuStrings.size();i++) {
         m_menuText->setString(m_menuStrings[i]);
         m_menuText->setFillColor(i==m_selectedMenuIndex ? sf::Color::Black : sf::Color::Blue);
-        m_menuText->setPosition({10,110+i*72});
+        m_menuText->setPosition({10.f, 110.f + i * 72.f});
         m_game.window().draw(*m_menuText);
     }
 
@@ -78,6 +79,9 @@ void Scene_Menu::sRender() {
     m_menuText->setCharacterSize(20);
     m_menuText->setFillColor(sf::Color::Black);
     m_menuText->setString("up: w      down: s        play: d     quit: esc");
+    m_menuText->setPosition({10,700});
+    m_game.window().draw(*m_menuText);
+    m_game.window().display();
 }
 
 void Scene_Menu::onEnd() {

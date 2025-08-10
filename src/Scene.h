@@ -5,6 +5,7 @@
 #include<Action.hpp>
 #include<EntityManager.hpp>
 
+class GameEngine;
 class Scene {
 protected:
   GameEngine&                                 m_game; //TODO: check if we have top do using raw pointers or there a better way to do it
