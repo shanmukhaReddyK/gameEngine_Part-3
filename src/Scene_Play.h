@@ -14,7 +14,6 @@ class Scene_Play : public Scene {
     };
 
 protected:
-
     std::string                 m_levelPath;
     PlayerConfig                m_playerConfig;
     bool                        m_drawTextures=true;
@@ -31,11 +30,20 @@ protected:
     void onEnd();
     void spawnPlayer();
     void spawnBullet(std::shared_ptr<Entity> entity);
+    void setPaused(bool setPause);
 
+    //Systems
+    void sMovement();
+    void sRender();
+    void sCollision();
+    void sAnimation();
+    void sGUI();
+    void sLifespan();
+    void sDoAction(const Action& action);  
+   
+    void drawLine(const Vec2f& p1, const Vec2f& p2);
     Vec2f gridToMidPixel(float x, float y, std::shared_ptr<Entity> entity);
     std::shared_ptr<Entity> player();
-
-    void sDoAction(const Action& action);
 
     Scene_Play(GameEngine& gameEngine,const std::string& levelPath);
 

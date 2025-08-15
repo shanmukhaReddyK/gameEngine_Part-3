@@ -5,7 +5,7 @@
 #include"Scene_Menu.h"
 #include"Scene_Play.h"
 
-Scene_Play::Scene_Play(GameEngine& gameEngine,const std::string& levelPath) : Scene(gameEngine),m_levelPath(levelPath) {
+Scene_Play::Scene_Play(GameEngine& gameEngine,const std::string& levelPath) : Scene(gameEngine), m_levelPath(levelPath) {
     init(m_levelPath);
 }
 
@@ -18,7 +18,7 @@ void Scene_Play::init(const std::string& levelPath){
 
     //TODO: Register remaining actions
     m_gridText= sf::Text(m_game.getAssets().getFont("Tech"));
-    m_gridText.setCharaterSize(12);
+    m_gridText->setCharacterSize(12);
 
     loadLevel(levelPath);
 }
@@ -37,22 +37,34 @@ Vec2f Scene_Play::gridToMidPixel(float x, float y, std::shared_ptr<Entity> entit
     return Vec2f(0,0);
 }
 
-void Scene_Play::loadLevel(const std::string& filename){
+void Scene_Play::loadLevel(const std::string& levelpath){
     //reset the entity manager everytime we load a level
     m_entityManager = EntityManager();
 
     //TODO:: read in the file and add appropriate entities
     //      use playerConfig struct m_playerConfig to store player properties
     //      this struct is defined at the top of Scene_Play
+    std::ifstream fin(levelpath);
 
+    if(!fin.is_open()) {
+        std::cerr<<"Error opening file "<< levelpath <<"\n";
+    }
+
+    std::string word;
+
+    while(fin >> word) {
+
+
+
+    }
     //NOTE::all of the code below is sample code which shows you how to set up and use entites with new syntax , it should be removed
-    
-    spawnPlayer();
+
+    spawnPlayer(); 
 
     //some sample entites
-    auto brick = m_enityManager.addEntity("tile");
+    auto brick = m_entityManager.addEntity("tile");
     //IMPORTANT: always add CAnimation first so that gridToMidPixel first so that it can compute the position required
-    brick->add<CAnimation>(m_game.getAssets().getAnimation("Brick"), true);
+    // brick->add<CAnimation>(m_game.getAssets().getAnimation("Brick"), true);
     brick->add<CTransform>(Vec2f(224, 480));
     //NOTE: you final code should position the entity with grid x,y position read from level.txt
     //brick->add<CTransform>(gridToMidPixel(gridX, gridY, brick));
@@ -251,7 +263,7 @@ void Scene_Play::sRender() {
     if(m_drawCollision) {
 
         for (auto& e:m_entityManager.getEntities()) {
-            if(e->has<CBoundingBox>) {
+            if(e->has<CBoundingBox>()) {
                 auto& box = e->get<CBoundingBox>();
                 auto& transform = e->get<CTransform>();
                 sf::RectangleShape rect;
@@ -259,7 +271,7 @@ void Scene_Play::sRender() {
                 rect.setOrigin(sf::Vector2f(box.halfSize.x,box.halfSize.y));
                 rect.setPosition({transform.pos.x,transform.pos.y});
                 rect.setFillColor(sf::Color(0,0,0,0));
-                rect.setOutlineColor(sf::Color(255,55,255,255));
+                rect.setOutlineColor(sf::Color(255,255,255,255));
                 rect.setOutlineThickness(1);
                 m_game.window().draw(rect);
             }
@@ -291,12 +303,21 @@ void Scene_Play::sRender() {
     }
 }
 
-void Scene_Play::drawLine(const vec2f& p1, const vec2f& p2) {
+void Scene_Play::drawLine(const Vec2f& p1, const Vec2f& p2) {
     //TODO
-    // sf::Vertex line[] = { sf::Vector2f(p1.x,p1.y), sf::Vector2f(p2.x,p2.y)}
-    m_game.window().draw (line, 2, sf::Lines);
+    sf::Vertex line[] = { 
+                            {sf::Vector2f(p1.x,p1.y), sf::Color(255,255,255,255),sf::Vector2f(p1.x,p1.y)},
+                            {sf::Vector2f(p2.x,p2.y), sf::Color(255,255,255,255),sf::Vector2f(p2.x,p2.y)}
+                        };
+
+    
+    m_game.window().draw (line, 2, sf::PrimitiveType::Lines);
 }
 
-std::shared_ptr<Entity> Scene_play:palyer() {
-    entityManager.getEntites("player");
+std::shared_ptr<Entity> Scene_Play::player() {
+   m_entityManager.getEntities("player");
+}
+
+void Scene_Play::setPaused(bool setPause) {
+    m_paused=setPause;
 }
