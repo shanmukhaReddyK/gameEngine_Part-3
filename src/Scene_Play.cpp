@@ -238,9 +238,9 @@ void Scene_Play::sRender() {
 
     //set up the viewport of the window to be centred to the player
     auto &pPos = player()->get<CTransform>().pos;
-    float windowCentreX =std::max(m_game.window().getSize().x/) //TODO
+    float windowCentreX =std::max((int)m_game.window().getSize().x/2,(int) pPos.x);
     sf::View view = m_game.window().getView();
-    view.setCentre(windowCentreX, m_game.window().getSize().y-) //TODO
+    view.setCenter({windowCentreX, m_game.window().getSize().y/2});
     m_game.window().setView(view);
 
     // Draw all the entity texture
@@ -279,43 +279,49 @@ void Scene_Play::sRender() {
     }
 
     if(m_drawGrid) {
-        //TODO
-        // float leftX = m_game.window().getView().getCenter().x -
+        m_gridText=sf::Text(m_game.getAssets().getFont("Tech"));
+        
+        //lamda functions to get height and width
+        auto width = [this]() {return m_game.window().getSize().x;};
+        auto height = [this]() {return m_game.window().getSize().y;};
+
+        float leftX = m_game.window().getView().getCenter().x -width()/2-m_gridSize.x;
         float rightX = leftX + width() + m_gridSize.x;
-        // float nextGridX = leftX - ((int)leftX % (int)m_gridSize.x)
+        float nextGridX = leftX - ((int)leftX % (int)m_gridSize.x);
 
         for (float x = nextGridX; x<rightX; x +=m_gridSize.x) {
+            //vertical lines drawing
             drawLine(Vec2f(x,0),Vec2f(x,height()));
         }
 
-        for (float y = 0; x<height(); y +=m_gridSize.y) {
-            // drawLine(Vec2f(leftX,height()-y,Vec2f(leftX,height()-y));
+        for (float y = 0; y<height(); y +=m_gridSize.y) {
+            //horizontal lines drawing
+            drawLine(Vec2f(leftX,height()-y),Vec2f(rightX,height()-y));
 
+            //grid labelling
             for(float x = nextGridX; x<rightX; x +=m_gridSize.x) {
 
-                std::string xCell =
-                std::string yCell =
-                m_gridText.setstring("(" + xCell "," + yCell ")" );
-                // m_gridText.setPosition(x+3, height()-y-m_gridSize)
-                m_game.window().draw(m_gridText);
+                std::string xCell = std::to_string((int)x/64);
+                std::string yCell = std::to_string((int)y/64);
+                m_gridText->setString("(" + xCell+ "," + yCell +")" );
+                m_gridText->setPosition({x+3, height()-y-m_gridSize.y+3});
+                m_game.window().draw(*m_gridText);
             }
         }
     }
 }
 
 void Scene_Play::drawLine(const Vec2f& p1, const Vec2f& p2) {
-    //TODO
     sf::Vertex line[] = { 
                             {sf::Vector2f(p1.x,p1.y), sf::Color(255,255,255,255),sf::Vector2f(p1.x,p1.y)},
                             {sf::Vector2f(p2.x,p2.y), sf::Color(255,255,255,255),sf::Vector2f(p2.x,p2.y)}
                         };
-
-    
+ 
     m_game.window().draw (line, 2, sf::PrimitiveType::Lines);
 }
 
 std::shared_ptr<Entity> Scene_Play::player() {
-   m_entityManager.getEntities("player");
+    m_entityManager.getEntities("player");
 }
 
 void Scene_Play::setPaused(bool setPause) {
