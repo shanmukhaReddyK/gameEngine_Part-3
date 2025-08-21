@@ -11,11 +11,10 @@
 #include<SFML/Graphics.hpp>
 
 class Assets {
-    std::map<std::string, sf::Texture>       m_textures;
-    // std::map<std::string, sf::Sound>         m_sounds;
-    std::map<std::string, sf::Font>          m_fonts;
-    //TODO: declare below when animations is done
-    //std::map<std::string,Animations>        m_animations
+    std::map<std::string, sf::Texture>                  m_textures;
+    // std::map<std::string, sf::Sound>                    m_sounds;
+    std::map<std::string, sf::Font>                     m_fonts;
+    std::map<std::string, std::shared_ptr<Animation>>   m_animations;
     
     public:
     void loadFromfile(const std::string& assetConfig) {
@@ -46,11 +45,12 @@ class Assets {
             //     addTexture(name,path);
             // }
 
-            // if(word == "Animation") {
-            //     std::string name,path;
-            //     fin >> name >> path;
-            //     addAnimation(name,path);
-            // }
+            if(word == "Animation") {
+                std::string name,textureName;
+                int frameCount,animSpeed;
+                fin >> name >> textureName>> frameCount >> animSpeed;
+                addAnimation(name, textureName, frameCount, animSpeed);
+            }
         }
 
     }
@@ -79,8 +79,14 @@ class Assets {
         }
     }
 
-    //TODO: declare below when animations is done
-    //void addAnimation(const std::string& name, Animation&){}
+
+    void addAnimation(const std::string& name, const std::string& textureName, const int frameCount, const int animSpeed) {
+        if(m_animations.find(name)==m_animations.end()) {
+            m_animations[name] = std::make_shared<Animation>(name,frameCount,animSpeed);
+        }
+
+        m_animations[name]->getSprite()=sf::Sprite(getTexture(textureName));
+    }
 
     sf::Texture& getTexture(const std::string& name){ //TODO: use const if we not changing them like const sf::texture& and what if that name is not present if(m_textures.find(map)==m_textures.end())
         return m_textures[name];
@@ -92,6 +98,10 @@ class Assets {
 
     sf::Font& getFont(const std::string& name){
         return m_fonts[name];
+    }
+
+    std::shared_ptr<Animation> getAnimation(const std::string& name){
+        return m_animations[name];
     }
 
 };

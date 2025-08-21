@@ -173,14 +173,14 @@ void Scene_Play::sAnimation() {
     //TODO: Complete the animation class implementation first
 
     //TODO: for each entity with an animation, call entity->get<CAnimation>().animation.update()
-    // if the animation is not repeated, and it has ended , destroy the entity
+    // if the animation is not repeated, and it has ended , destroy the entityj
 
     //TODO: set the aninmation opf the player based on its CState component
     //if player state has been set to running
     if(player()->get<CState>().state == "run") {
         //change its animation to repeating run animation 
         //NOTE: adding a component that already exists simply overwrites it
-        player->add<CAnimation>(m_game.getAssets().getAnimation("Run"), true);
+        player()->add<CAnimation>(m_game.getAssets().getAnimation("Run"), true);
     }
 }
 
@@ -301,8 +301,8 @@ void Scene_Play::sRender() {
             //grid labelling
             for(float x = nextGridX; x<rightX; x +=m_gridSize.x) {
 
-                std::string xCell = std::to_string((int)x/64);
-                std::string yCell = std::to_string((int)y/64);
+                std::string xCell = std::to_string((int)x/(int)m_gridSize.x);
+                std::string yCell = std::to_string((int)y/(int)m_gridSize.y);
                 m_gridText->setString("(" + xCell+ "," + yCell +")" );
                 m_gridText->setPosition({x+3, height()-y-m_gridSize.y+3});
                 m_game.window().draw(*m_gridText);
