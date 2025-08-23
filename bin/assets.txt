@@ -1,3 +1,4 @@
 Texture TexBackgroundMap images/Tilemap/backgrounds.png
 Texture TexCharacterMap images/Tilemap/characters.png
+Animation SamuraiStill TexCharacterMap 8 10 0 0
 Font Tech fonts/tech.ttf
