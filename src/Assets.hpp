@@ -48,8 +48,9 @@ class Assets {
             if(word == "Animation") {
                 std::string name,textureName;
                 int frameCount,animSpeed;
-                fin >> name >> textureName>> frameCount >> animSpeed;
-                addAnimation(name, textureName, frameCount, animSpeed);
+                float startX, startY, sizeX, sizeY;
+                fin >> name >> textureName>> frameCount >> animSpeed >> startX >> startY >> sizeX >> sizeY;
+                addAnimation(name, textureName, frameCount, animSpeed, startX, startY, sizeX, sizeY);
             }
         }
 
@@ -80,9 +81,9 @@ class Assets {
     }
 
 
-    void addAnimation(const std::string& name, const std::string& textureName, const int frameCount, const int animSpeed) {
+    void addAnimation(const std::string& name, const std::string& textureName, const int frameCount, const int animSpeed, const float startX, const float startY, const float sizeX, const float sizeY) {
         if(m_animations.find(name)==m_animations.end()) {
-            m_animations[name] = std::make_shared<Animation>(name,frameCount,animSpeed);
+            m_animations[name] = std::make_shared<Animation>(name,frameCount,animSpeed,startX, startY, sizeX, sizeY);
         }
 
         m_animations[name]->getSprite()=sf::Sprite(getTexture(textureName));
