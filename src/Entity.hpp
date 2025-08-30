@@ -6,7 +6,7 @@
 
 class EntityManager;
 
-using ComponentTyple = std::tuple<CTransform,CBoundingBox,CGravity,CState,CLifespan,CInput>; //TODO: add CAnimations once Animation is implemented
+using ComponentTyple = std::tuple<CTransform,CBoundingBox,CGravity,CState,CLifespan,CInput,CAnimation>;
 
 class Entity {
   friend class EntityManager;

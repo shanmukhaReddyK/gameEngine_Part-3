@@ -46,6 +46,10 @@ sf::RenderWindow& GameEngine::window() {
     return m_window;
 }
 
+sf::Clock& GameEngine::clock() {
+    return m_deltaClock;
+}
+
 void GameEngine::run() {
     while(isRunning()) {
         update();
@@ -54,6 +58,7 @@ void GameEngine::run() {
 
 //Calls the update function of the current scene
 void GameEngine::update() {
+    
     currentScene()->update();
     sUserInput();
 }

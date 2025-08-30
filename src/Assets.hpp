@@ -11,10 +11,10 @@
 #include<SFML/Graphics.hpp>
 
 class Assets {
-    std::map<std::string, sf::Texture>                  m_textures;
+    std::map<std::string, sf::Texture>                  m_textureMap;
     // std::map<std::string, sf::Sound>                    m_sounds;
-    std::map<std::string, sf::Font>                     m_fonts;
-    std::map<std::string, std::shared_ptr<Animation>>   m_animations;
+    std::map<std::string, sf::Font>                     m_fontMap;
+    std::map<std::string, Animation>                    m_animations;
     
     public:
     void loadFromfile(const std::string& assetConfig) {
@@ -48,21 +48,25 @@ class Assets {
             if(word == "Animation") {
                 std::string name,textureName;
                 int frameCount,animSpeed;
-                float startX, startY, sizeX, sizeY;
-                fin >> name >> textureName>> frameCount >> animSpeed >> startX >> startY >> sizeX >> sizeY;
-                addAnimation(name, textureName, frameCount, animSpeed, startX, startY, sizeX, sizeY);
+                Vec2f start,size;
+                fin >> name >> textureName>> frameCount >> animSpeed >> start.x >> start.y >> size.x >> size.y;
+                addAnimation(name, textureName, frameCount, animSpeed, start,size);
             }
         }
 
     }
 
+    //adding textures from config file
     void addTexture(const std::string& name, const std::string& path){
+        try {
+            sf::Texture tex{ path };
+            tex.setSmooth(true);
+            m_textureMap.emplace(name, std::move(tex));
+            std::cout << "Loaded Texture: " << path << "\n";
+        }
 
-        if(m_textures.find(name)==m_textures.end())
-            m_textures[name]=sf::Texture();
-        
-        if(!m_textures[name].loadFromFile(path)) {
-            std::cout<<"unable to open " << name << "file\n";
+        catch (const sf::Exception& e) {
+            std::cerr << "Could not load texture file: " << path << " (" << e.what() << ")\n";
         }
     }
 
@@ -71,26 +75,45 @@ class Assets {
     //     std::cout<<"Audio still in progress\n";
     // }
 
+    //adding fonts from config file
     void addFont(const std::string& name, const std::string& path){
-        if(m_fonts.find(name)==m_fonts.end())
-            m_fonts[name]=sf::Font();
-        
-        if(!m_fonts[name].openFromFile(path)) {
-            std::cout<<"unable to open " << name << "file\n";
+        try {
+            sf::Font fnt{ path };
+            m_fontMap.emplace(name, std::move(fnt));
+            std::cout << "Loaded Font:    " << path << "\n";
+        }
+
+        catch (const sf::Exception& e) {
+            std::cerr << "Could not load font file: " << path << " (" << e.what() << ")\n";
         }
     }
 
-
-    void addAnimation(const std::string& name, const std::string& textureName, const int frameCount, const int animSpeed, const float startX, const float startY, const float sizeX, const float sizeY) {
-        if(m_animations.find(name)==m_animations.end()) {
-            m_animations[name] = std::make_shared<Animation>(name,frameCount,animSpeed,startX, startY, sizeX, sizeY);
+    //adding animations from config file
+    void addAnimation(const std::string& name, const std::string& textureName, const int frameCount, const int animSpeed, const Vec2f& start, const Vec2f& size) {
+        auto it = m_animations.find(name);
+        if (it != m_animations.end()) {
+            std::cerr << "Warning: Animation '" << name << "' already exists, replacing it.\n";
+            it->second = Animation(name, frameCount, animSpeed, start, size);
+        } else {
+            m_animations.emplace(name, Animation(name, frameCount, animSpeed, start, size));
         }
 
-        m_animations[name]->getSprite()=sf::Sprite(getTexture(textureName));
+        m_animations[name].getSprite()=sf::Sprite(getTexture(textureName));
+
+        try {
+            std::cout << "Loaded Animation:    " << name << "\n";
+        }
+
+        catch (const sf::Exception& e) {
+            std::cerr << "Could not load Animation Sprite: " << name << " (" << e.what() << ")\n";
+        }
     }
 
+    
     sf::Texture& getTexture(const std::string& name){ //TODO: use const if we not changing them like const sf::texture& and what if that name is not present if(m_textures.find(map)==m_textures.end())
-        return m_textures[name];
+        auto it = m_textureMap.find(name);
+        assert(it != m_textureMap.end());
+        return it->second;
     }
 
     // sf::Sound& getSound(const std::string& name){
@@ -98,11 +121,19 @@ class Assets {
     // }
 
     sf::Font& getFont(const std::string& name){
-        return m_fonts[name];
+        auto it = m_fontMap.find(name);
+        assert(it != m_fontMap.end());
+        return it->second;
     }
 
-    std::shared_ptr<Animation> getAnimation(const std::string& name){
-        return m_animations[name];
+    Animation& getAnimation(const std::string& name){
+        auto it = m_animations.find(name);
+        assert(it != m_animations.end());
+        return it->second;
+    }
+
+    const std::map<std::string,Animation>& getAnimation() {
+        return m_animations;
     }
 
 };

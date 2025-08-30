@@ -3,7 +3,7 @@
 #include"Components.hpp"
 #include"GameEngine.h"
 #include"Scene_Menu.h"
-// #include"Scene_Play.h"
+#include"Scene_Play.h"
 
 Scene_Menu::Scene_Menu(GameEngine& gameEngine) : Scene(gameEngine) {
     init();
@@ -15,7 +15,7 @@ void Scene_Menu::init() {
     registerAction(sf::Keyboard::Key::D, "PLAY");
     registerAction(sf::Keyboard::Key::Escape, "QUIT");
 
-    m_title = "Jelly Plat";
+    m_title = "Sam samurai";
     m_menuStrings.push_back("Level 1");
     m_menuStrings.push_back("Level 2");
     m_menuStrings.push_back("Level 3");
@@ -46,7 +46,7 @@ void Scene_Menu::sDoAction(const Action& action) {
         }
 
         else if(action.name()=="PLAY") {
-            // m_game.changeScene("PLAY", std::make_shared<Scene_Play>(m_game, m_levelPaths[m_selectedMenuIndex]));
+            m_game.changeScene("PLAY", std::make_shared<Scene_Play>(m_game, m_levelPaths[m_selectedMenuIndex]));
         }
 
         else if(action.name()=="QUIT") {

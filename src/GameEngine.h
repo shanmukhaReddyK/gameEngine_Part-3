@@ -10,6 +10,7 @@
 class Scene;
 class GameEngine {
     sf::RenderWindow                                m_window;    //the window we will draw
+    sf::Clock                                       m_deltaClock;
     std::map<std::string,std::shared_ptr<Scene>>    m_sceneMap;
     Assets                                          m_assets;
     std::string                                     m_currentScene;
@@ -31,6 +32,7 @@ class GameEngine {
     
     Assets& getAssets();
     sf::RenderWindow& window();
+    sf::Clock& clock();
     std::shared_ptr<Scene> currentScene();
 
     GameEngine(const std::string& assetConfig);

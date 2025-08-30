@@ -4,8 +4,6 @@
 #include <map>
 #include <memory>
 
-#include "EntityManager.hpp"
-
 class Scene_Play : public Scene {
 
     struct PlayerConfig {
@@ -44,7 +42,8 @@ protected:
     void drawLine(const Vec2f& p1, const Vec2f& p2);
     Vec2f gridToMidPixel(float x, float y, std::shared_ptr<Entity> entity);
     std::shared_ptr<Entity> player();
-
+    
+public:
     Scene_Play(GameEngine& gameEngine,const std::string& levelPath);
 
 };

@@ -12,7 +12,7 @@ protected:
   EntityManager                               m_entityManager;
   std::map<sf::Keyboard::Key,std::string>     m_actionMap;
   int                                         m_currentFrame;
-  bool                                        m_paused;
+  bool                                        m_paused=false;
 
 public: 
   virtual void update() = 0;
