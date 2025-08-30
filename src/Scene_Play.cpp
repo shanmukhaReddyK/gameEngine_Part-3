@@ -18,7 +18,7 @@ void Scene_Play::init(const std::string& levelPath){
 
     //TODO: Register remaining actions
     m_gridText= sf::Text(m_game.getAssets().getFont("Tech"));
-    m_gridText->setCharacterSize(12);
+    m_gridText->setCharacterSize(8);
 
     loadLevel(levelPath);
 }
@@ -286,7 +286,7 @@ void Scene_Play::sRender() {
     }
 
     if(m_drawGrid) {
-        m_gridText=sf::Text(m_game.getAssets().getFont("Tech"));
+        // m_gridText=sf::Text(m_game.getAssets().getFont("Tech"));
         
         //lamda functions to get height and width
         auto width = [this]() {return m_game.window().getSize().x;};
