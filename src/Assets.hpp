@@ -60,7 +60,7 @@ class Assets {
     void addTexture(const std::string& name, const std::string& path){
         try {
             sf::Texture tex{ path };
-            tex.setSmooth(true);
+            // tex.setSmooth(true);  //set texture to smooth if needed
             m_textureMap.emplace(name, std::move(tex));
             std::cout << "Loaded Texture: " << path << "\n";
         }
@@ -99,6 +99,7 @@ class Assets {
         }
 
         m_animations[name].getSprite()=sf::Sprite(getTexture(textureName));
+        m_animations[name].getSprite()->setScale({2.0f,2.0f});
 
         try {
             std::cout << "Loaded Animation:    " << name << "\n";
