@@ -99,7 +99,6 @@ class Assets {
         }
 
         m_animations[name].getSprite()=sf::Sprite(getTexture(textureName));
-        m_animations[name].getSprite()->setScale({2.0f,2.0f});
 
         try {
             std::cout << "Loaded Animation:    " << name << "\n";

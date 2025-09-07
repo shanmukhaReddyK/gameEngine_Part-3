@@ -17,6 +17,10 @@ void Scene_Play::init(const std::string& levelPath){
     registerAction(sf::Keyboard::Key::G,     "TOGGLE_GRID");
 
     //TODO: Register remaining actions
+    registerAction(sf::Keyboard::Key::W, "JUMP");
+    registerAction(sf::Keyboard::Key::D, "RIGHT");
+    registerAction(sf::Keyboard::Key::A, "LEFT");
+    registerAction(sf::Keyboard::Key::S, "DOWN");
     m_gridText= sf::Text(m_game.getAssets().getFont("Tech"));
     m_gridText->setCharacterSize(8);
 
@@ -121,7 +125,7 @@ void Scene_Play::update() {
     ImGui::SFML::Update(m_game.window(),m_game.clock().restart());
     //TODO: Implement pause functionality
 
-    // sMovement();
+    sMovement();
     // sLifespan();
     // sCollision();
     sAnimation();
@@ -130,9 +134,44 @@ void Scene_Play::update() {
 }
 
 void Scene_Play::sMovement() {
+    //* I Think we have to update player sate here
+    //* update player sprite based on the direction its moving 
+    //! player can shoot or jump only when the booleans canShoot or canJump are true respectively
     //TODO: Implement player movement / jumpimg based on its CInput component
-    //TODO: Implement gravity effect on player
     //TODO: Implement the maximum player speed in both x and y directions
+    
+    auto& pInput = player()->get<CInput>();
+    auto& pTransform = player()->get<CTransform>();
+
+    if(player()->has<CGravity>()) {
+        pTransform.velocity.y += player()->get<CGravity>().gravity;
+    }
+
+    if(pInput.up) {
+        player()->get<CState>().state = "run";  //TODO: change it to jumping when jumping is implemented
+        pTransform.pos.y -= pTransform.velocity.y; //SFML y axis is postive downwards
+    }
+
+    if(pInput.left) {
+        player()->get<CState>().state = "run";
+        pTransform.pos.x -= pTransform.velocity.x;
+        pTransform.scale.x = -1.0;  //!this step assumes that sacle would we just 1 or -1 (otherwise the acutal scale value get overwritten)
+    }
+
+    if(pInput.right) {
+        player()->get<CState>().state = "run";
+        pTransform.pos.x += pTransform.velocity.x;
+        pTransform.scale.x = 1.0;   //!this step assumes that sacle would we just 1 or -1 (otherwise the acutal scale value get overwritten)
+
+    }
+
+    if(pInput.down) {
+        player()->get<CState>().state = "run"; //TODO: change it to jumping when jumping is implemented
+        pTransform.pos.y += pTransform.velocity.y;
+    }
+
+    //TODO: reset player state to "stand" when he is not moving
+    
     //NOTE: Setting an Entity scale.x to -1/1 will make it face to the left/right
 }
 
@@ -164,15 +203,44 @@ void Scene_Play::sDoAction(const Action& action) {
         else if (action.name()=="TOGGLE_GRID")          { m_drawGrid=!m_drawGrid; }
         else if (action.name()=="PAUSE")                { setPaused(!m_paused); }
         else if (action.name()=="QUIT")                 { onEnd(); }
+        else if (action.name()=="JUMP")                 { player()->get<CInput>().up=true;}
+        else if (action.name()=="RIGHT")                { player()->get<CInput>().right=true;}
+        else if (action.name()=="LEFT")                 { player()->get<CInput>().left=true;}
+        else if (action.name()=="DOWN")                 { player()->get<CInput>().down=true;}
     }
 
     else if (action.type()=="END") {
         //TODO
+        if (action.name()=="JUMP")                      { player()->get<CInput>().up=false;}
+        else if (action.name()=="RIGHT")                { player()->get<CInput>().right=false;}
+        else if (action.name()=="LEFT")                 { player()->get<CInput>().left=false;}
+        else if (action.name()=="DOWN")                 { player()->get<CInput>().down=false;}
     }
 }
 
 void Scene_Play::sAnimation() {
     //TODO: Complete the animation class implementation first
+
+    //TODO: set the aninmation opf the player based on its CState component
+    //if player state has been set to running
+    if(player()->get<CState>().state == "run") {
+        //change its animation to repeating run animation 
+        //NOTE: adding a component that already exists simply overwrites it
+        player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiRun"), true);
+    }
+
+    if(player()->get<CState>().state == "stand") {
+        //change its animation to repeating run animation 
+        //NOTE: adding a component that already exists simply overwrites it
+        player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiStill"), true);
+    }
+
+    if(player()->get<CState>().state == "jump") {
+        //change its animation to repeating run animation 
+        //NOTE: adding a component that already exists simply overwrites it
+        player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiAir"), true);
+    }
+
 
     //TODO: for each entity with an animation, call entity->get<CAnimation>().animation.update()
     for(auto& e : m_entityManager.getEntities()) {
@@ -182,14 +250,6 @@ void Scene_Play::sAnimation() {
         }
     } 
         // if the animation is not repeated, and it has ended , destroy the entityj
-
-    //TODO: set the aninmation opf the player based on its CState component
-    //if player state has been set to running
-    // if(player()->get<CState>().state == "run") {
-    //     //change its animation to repeating run animation 
-    //     //NOTE: adding a component that already exists simply overwrites it
-    //     player()->add<CAnimation>(m_game.getAssets().getAnimation("Run"), true);
-    // }
 }
 
 void Scene_Play::onEnd() {
@@ -262,7 +322,7 @@ void Scene_Play::sRender() {
                 auto& animation = e->get<CAnimation>().animation;
                 // animation.getSprite()->SetRotation(transform.angl...);
                 animation.getSprite()->setPosition(transform.pos);
-                // animation.getSprite()->SetScale(transform.scale.x..);
+                animation.getSprite()->setScale({transform.scale.x*2,transform.scale.y*2}); //!working around for scale issure of small size of sprites
                 m_game.window().draw(*animation.getSprite());
             }
         }
