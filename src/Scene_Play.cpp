@@ -24,7 +24,6 @@ void Scene_Play::init(const std::string& levelPath){
 }
 
 Vec2f Scene_Play::gridToMidPixel(float x, float y, std::shared_ptr<Entity> entity){
-    //TODO: this function takes in a grid (x,y) position and an Entity
     //  return a vec2f indicationg  where a centre postion should be
     //  you must use Entity's animation size to postion it correctly
     //          entity->get<CAnimation>().getSize()
@@ -33,8 +32,10 @@ Vec2f Scene_Play::gridToMidPixel(float x, float y, std::shared_ptr<Entity> entit
     
     //remember that SFML has (0,0) in the top left, while grid co ordinates are specified from bottom left
     //you can get the size of the SFML window via m_game.window().getSize();
-
-    return Vec2f(0,0);
+    //* could also use bounding box half size if the bounding box is added before trannsform pos gets added
+    float midX = x*m_gridSize.x+ entity->get<CAnimation>().animation.getSize().y/2; 
+    float midY = m_game.window().getSize().y-( y * m_gridSize.y + entity->get<CAnimation>().animation.getSize().y/2 );
+    return Vec2f(midX,midY);
 }
 
 void Scene_Play::loadLevel(const std::string& levelpath){
@@ -73,7 +74,7 @@ void Scene_Play::loadLevel(const std::string& levelpath){
         //This could be a good way of identifying if a tile is brick!
     }
 
-    auto block=m_entityManager.addEntity("tile");
+    auto block = m_entityManager.addEntity("tile");
     block->add<CAnimation>(m_game.getAssets().getAnimation("Block2"), true );
     block->add<CTransform>(Vec2f(254,480));
     //add a bounding box , this will show up if press the 'C' key
@@ -99,7 +100,7 @@ void Scene_Play::loadLevel(const std::string& levelpath){
 
 void Scene_Play::spawnPlayer() {
     //sample player entity
-    auto player=m_entityManager.addEntity("player");
+    auto player = m_entityManager.addEntity("player");
     player->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiStill"), true);
     player->add<CTransform>(Vec2f(224,352));
     player->add<CBoundingBox>(Vec2f(32,32));
@@ -203,8 +204,8 @@ void Scene_Play::sGUI() {
     if (ImGui::BeginTabBar("MyTabBar",tab_bar_flags)) {
         if (ImGui::BeginTabItem("Actions")) {
             for (const auto& [key,name] : getActionMap() ) {
-                std::string ss= "START##" + name;
-                std::string se= "END##" + name;
+                std::string ss = "START##" + name;
+                std::string se = "END##" + name;
 
                 if (ImGui::Button(ss.c_str())) {
                     doAction(Action(name, "START"));
@@ -246,7 +247,7 @@ void Scene_Play::sRender() {
 
     //set up the viewport of the window to be centred to the player
     auto &pPos = player()->get<CTransform>().pos;
-    float windowCentreX =std::max((int)m_game.window().getSize().x/2,(int) pPos.x);
+    float windowCentreX = std::max((int)m_game.window().getSize().x/2,(int) pPos.x);
     sf::View view = m_game.window().getView();
     view.setCenter({windowCentreX,(float)m_game.window().getSize().y/2});
     m_game.window().setView(view);
