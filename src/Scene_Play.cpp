@@ -98,7 +98,7 @@ void Scene_Play::loadLevel(const std::string& levelpath){
 
             this will reference the transform with variable 'transform2' -it is correct
             now the changes you make to transform2 will be changed inside the entity
-            auto& transform1 = entity->get<CTransform>();
+            auto& transform2 = entity->get<CTransform>();
     */   
 }
 
@@ -229,24 +229,23 @@ void Scene_Play::sAnimation() {
         player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiRun"), true);
     }
 
-    if(player()->get<CState>().state == "stand") {
-        //change its animation to repeating run animation 
-        //NOTE: adding a component that already exists simply overwrites it
-        player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiStill"), true);
-    }
+    // if(player()->get<CState>().state == "stand") {
+    //     //change its animation to repeating run animation 
+    //     //NOTE: adding a component that already exists simply overwrites it
+    //     player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiStill"), true);
+    // }
 
-    if(player()->get<CState>().state == "jump") {
-        //change its animation to repeating run animation 
-        //NOTE: adding a component that already exists simply overwrites it
-        player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiAir"), true);
-    }
+    // if(player()->get<CState>().state == "jump") {
+    //     //change its animation to repeating run animation 
+    //     //NOTE: adding a component that already exists simply overwrites it
+    //     player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiAir"), true);
+    // }
 
 
     //TODO: for each entity with an animation, call entity->get<CAnimation>().animation.update()
     for(auto& e : m_entityManager.getEntities()) {
         if(e->get<CAnimation>().exists) {
-            e->get<CAnimation>().animation.update();
-    
+            e->get<CAnimation>().animation.update(); 
         }
     } 
         // if the animation is not repeated, and it has ended , destroy the entityj

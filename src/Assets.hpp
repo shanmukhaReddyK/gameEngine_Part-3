@@ -110,7 +110,7 @@ class Assets {
     }
 
     
-    sf::Texture& getTexture(const std::string& name){ //TODO: use const if we not changing them like const sf::texture& and what if that name is not present if(m_textures.find(map)==m_textures.end())
+    const sf::Texture& getTexture(const std::string& name){ //TODO: use const if we not changing them like const sf::texture& and what if that name is not present if(m_textures.find(map)==m_textures.end())
         auto it = m_textureMap.find(name);
         assert(it != m_textureMap.end());
         return it->second;
@@ -120,7 +120,7 @@ class Assets {
     //     return m_sounds[name];
     // }
 
-    sf::Font& getFont(const std::string& name){
+    const sf::Font& getFont(const std::string& name){
         auto it = m_fontMap.find(name);
         assert(it != m_fontMap.end());
         return it->second;
