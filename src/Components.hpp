@@ -73,3 +73,13 @@ class CState : public Component {
     CState(const std::string& s) : state(s) {}
 };
 
+static_assert(std::is_default_constructible_v<CTransform>);
+static_assert(std::is_default_constructible_v<CLifespan>);
+static_assert(std::is_default_constructible_v<CInput>);
+static_assert(std::is_default_constructible_v<CBoundingBox>);
+static_assert(std::is_default_constructible_v<CAnimation>);
+static_assert(std::is_default_constructible_v<CGravity>);
+static_assert(std::is_default_constructible_v<CState>);
+
+static_assert(std::is_default_constructible_v<Vec2f>);
+static_assert(std::is_default_constructible_v<Animation>);
