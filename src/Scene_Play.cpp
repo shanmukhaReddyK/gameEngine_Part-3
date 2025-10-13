@@ -81,9 +81,10 @@ void Scene_Play::loadLevel(const std::string& levelpath){
     auto block = m_entityManager.addEntity("tile");
     block->add<CAnimation>(m_game.getAssets().getAnimation("Block2"), true );
     // block->add<CTransform>(Vec2f(300,480));
-    brick->add<CTransform>(gridToMidPixel( 2, 2, block));
+    block->add<CTransform>(gridToMidPixel( 2, 2, block));
     //add a bounding box , this will show up if press the 'C' key
-    block->add<CBoundingBox>(m_game.getAssets().getAnimation("Block2").getSize());
+   block->add<CBoundingBox>(m_game.getAssets().getAnimation("Block2").getSize());
+   
 
     // auto block=m_entityManager.addEntity("tile");
     // block->add<CAnimation>(m_game.getAssets().getAnimation("Question"), true);
@@ -143,31 +144,31 @@ void Scene_Play::sMovement() {
     
     auto& pInput = player()->get<CInput>();
     auto& pTransform = player()->get<CTransform>();
-
+    auto &pState =  player()->get<CState>();
     if(player()->has<CGravity>()) {
         pTransform.velocity.y += player()->get<CGravity>().gravity;
     }
 
     if(pInput.up) {
-        player()->get<CState>().state = "run";  //TODO: change it to jumping when jumping is implemented
+        pState.state = "run";  //TODO: change it to jumping when jumping is implemented
         pTransform.pos.y -= pTransform.velocity.y; //SFML y axis is postive downwards
     }
 
     if(pInput.left) {
-        player()->get<CState>().state = "run";
+        pState.state = "run";
         pTransform.pos.x -= pTransform.velocity.x;
         pTransform.scale.x = -1.0;  //!this step assumes that sacle would we just 1 or -1 (otherwise the acutal scale value get overwritten)
     }
 
     if(pInput.right) {
-        player()->get<CState>().state = "run";
+        pState.state = "run";  
         pTransform.pos.x += pTransform.velocity.x;
         pTransform.scale.x = 1.0;   //!this step assumes that sacle would we just 1 or -1 (otherwise the acutal scale value get overwritten)
 
     }
 
     if(pInput.down) {
-        player()->get<CState>().state = "run"; //TODO: change it to jumping when jumping is implemented
+        pState.state = "run";  //TODO: change it to jumping when jumping is implemented
         pTransform.pos.y += pTransform.velocity.y;
     }
 
@@ -227,6 +228,8 @@ void Scene_Play::sAnimation() {
     if(player()->get<CState>().state == "run") {
         //change its animation to repeating run animation 
         //NOTE: adding a component that already exists simply overwrites it
+        //if the player is already in running animation and for each frame the below animation sets the aniamtion to run
+        //which means each frame it would only 1st frame of the runnings animation being applied
         player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiRun"), true);
     }
 

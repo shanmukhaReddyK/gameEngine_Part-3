@@ -99,6 +99,7 @@ class Assets {
         }
 
         m_animations[name].getSprite()=sf::Sprite(getTexture(textureName));
+        m_animations[name].getSprite()->setOrigin({size.x/2,size.y/2});
 
         try {
             std::cout << "Loaded Animation:    " << name << "\n";

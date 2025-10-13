@@ -29,12 +29,12 @@ class Animation {
         if(m_frameCount>1) {
         m_animeFrame=(m_gameFrame/m_speed) % m_frameCount;
         }
-        if(m_name=="SamuraiRun") {
-        std::cout<<"anime frame:"<<m_animeFrame<<"\n";
-        std::cout<<"speed:"<<m_speed<<"\n";
-        std::cout<<"game frame:"<<m_gameFrame<<"\n";
-        std::cout<<"X "<<(int)(m_startPoint.x+m_size.x*(m_animeFrame));
-        }
+        // if(m_name=="SamuraiRun") {
+        // std::cout<<"anime frame:"<<m_animeFrame<<"\n";
+        // std::cout<<"speed:"<<m_speed<<"\n";
+        // std::cout<<"game frame:"<<m_gameFrame<<"\n";
+        // std::cout<<"X "<<(int)(m_startPoint.x+m_size.x*(m_animeFrame));
+        // }
         m_sprite->setTextureRect(sf::IntRect({(int)(m_startPoint.x+m_size.x*(m_animeFrame)),(int)m_startPoint.y},{(int)m_size.x,(int)m_size.y}));
     } 
 

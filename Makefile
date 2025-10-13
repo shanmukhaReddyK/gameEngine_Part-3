@@ -2,12 +2,13 @@ CXX    := g++
 OUTPUT := sfmlgame
 
 ifeq ($(DEBUG),1)
-    CXX_FLAGS := -g -O0 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations
-	LDFLAGS   := -g -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lGL
+	CXX_FLAGS := -g -O0 -std=c++20 -Wall -Wextra -Wno-unused-result -Wno-deprecated-declarations -no-pie -Wno-reoder
+	LDFLAGS   := -g -no-pie -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lGL
 else
-    CXX_FLAGS := -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations
+	CXX_FLAGS := -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder
 	LDFLAGS   := -O3 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lGL
 endif
+
 # CXX_FLAGS := -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations
 INCLUDES  := -I./src -I ./src/imgui
 # LDFLAGS   := -O3 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lGL
