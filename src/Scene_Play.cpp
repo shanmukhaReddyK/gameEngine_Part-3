@@ -37,7 +37,7 @@ Vec2f Scene_Play::gridToMidPixel(float x, float y, std::shared_ptr<Entity> entit
     //remember that SFML has (0,0) in the top left, while grid co ordinates are specified from bottom left
     //you can get the size of the SFML window via m_game.window().getSize();
     //* could also use bounding box half size if the bounding box is added before trannsform pos gets added
-    float midX = x*m_gridSize.x+ entity->get<CAnimation>().animation.getSize().y/2; 
+    float midX = x*m_gridSize.x+ entity->get<CAnimation>().animation.getSize().x/2; 
     float midY = m_game.window().getSize().y-( y * m_gridSize.y + entity->get<CAnimation>().animation.getSize().y/2 );
     return Vec2f(midX,midY);
 }
@@ -70,9 +70,9 @@ void Scene_Play::loadLevel(const std::string& levelpath){
     auto brick = m_entityManager.addEntity("tile");
     //IMPORTANT: always add CAnimation first so that gridToMidPixel first so that it can compute the position required
     brick->add<CAnimation>(m_game.getAssets().getAnimation("Brick1"), true);
-    brick->add<CTransform>(Vec2f(224, 480));
+    // brick->add<CTransform>(Vec2f(224, 480));
     //NOTE: you final code should position the entity with grid x,y position read from level.txt
-    //brick->add<CTransform>(gridToMidPixel(gridX, gridY, brick));
+    brick->add<CTransform>(gridToMidPixel( 1, 2, brick));
 
     if(brick->get<CAnimation>().animation.getName() == "Brick1") {
         //This could be a good way of identifying if a tile is brick!
@@ -80,7 +80,8 @@ void Scene_Play::loadLevel(const std::string& levelpath){
 
     auto block = m_entityManager.addEntity("tile");
     block->add<CAnimation>(m_game.getAssets().getAnimation("Block2"), true );
-    block->add<CTransform>(Vec2f(254,480));
+    // block->add<CTransform>(Vec2f(300,480));
+    brick->add<CTransform>(gridToMidPixel( 2, 2, block));
     //add a bounding box , this will show up if press the 'C' key
     block->add<CBoundingBox>(m_game.getAssets().getAnimation("Block2").getSize());
 
@@ -308,7 +309,7 @@ void Scene_Play::sRender() {
     auto &pPos = player()->get<CTransform>().pos;
     float windowCentreX = std::max((int)m_game.window().getSize().x/2,(int) pPos.x);
     sf::View view = m_game.window().getView();
-    view.setCenter({windowCentreX,(float)m_game.window().getSize().y/2});
+    view.setCenter({windowCentreX,m_game.window().getSize().y-view.getCenter().y});
     m_game.window().setView(view);
 
     // Draw all the entity texture
@@ -321,7 +322,7 @@ void Scene_Play::sRender() {
                 auto& animation = e->get<CAnimation>().animation;
                 // animation.getSprite()->SetRotation(transform.angl...);
                 animation.getSprite()->setPosition(transform.pos);
-                animation.getSprite()->setScale({transform.scale.x*2,transform.scale.y*2}); //!working around for scale issure of small size of sprites
+                animation.getSprite()->setScale({transform.scale.x,transform.scale.y});
                 m_game.window().draw(*animation.getSprite());
             }
         }
@@ -383,8 +384,8 @@ void Scene_Play::sRender() {
 
 void Scene_Play::drawLine(const Vec2f& p1, const Vec2f& p2) {
     sf::Vertex line[] = { 
-                            {sf::Vector2f(p1.x,p1.y), sf::Color(255,255,255,255),sf::Vector2f(p1.x,p1.y)},
-                            {sf::Vector2f(p2.x,p2.y), sf::Color(255,255,255,255),sf::Vector2f(p2.x,p2.y)}
+                            {sf::Vector2f(p1.x,p1.y), sf::Color(255,255,255,255)},
+                            {sf::Vector2f(p2.x,p2.y), sf::Color(255,255,255,255)}
                         };
  
     m_game.window().draw (line, 2, sf::PrimitiveType::Lines);

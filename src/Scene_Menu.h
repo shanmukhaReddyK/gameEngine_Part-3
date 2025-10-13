@@ -9,7 +9,7 @@ protected:
     std::vector<std::string>        m_levelPaths;
     std::optional<sf::Text>         m_menuText;
     std::string                     m_title;
-    int                             m_selectedMenuIndex;
+    int                             m_selectedMenuIndex=0;
 
     void    init();
     void    sRender();
