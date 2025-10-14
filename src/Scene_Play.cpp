@@ -105,7 +105,13 @@ void Scene_Play::loadLevel(const std::string& levelpath){
 }
 
 void Scene_Play::spawnPlayer() {
-    //sample player entity
+
+    /*
+    TODO: check if player already exists before adding a new one 
+    TODO: if it already exits, just overwrite the values of the existing one (create m_player variable)
+    ? if (!m_player) {m_entityManager.addEntity("player");}
+    */
+
     auto player = m_entityManager.addEntity("player");
     player->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiStill"), true);
     player->add<CTransform>(Vec2f(224,352));
@@ -142,25 +148,29 @@ void Scene_Play::sMovement() {
     //TODO: Implement player movement / jumpimg based on its CInput component
     //TODO: Implement the maximum player speed in both x and y directions
     
-    auto& pInput = player()->get<CInput>();
-    auto& pTransform = player()->get<CTransform>();
-    auto &pState =  player()->get<CState>();
+    auto& pInput     =      player()->get<CInput>();
+    auto& pTransform =      player()->get<CTransform>();
+    auto& pState     =      player()->get<CState>();
+
     if(player()->has<CGravity>()) {
         pTransform.velocity.y += player()->get<CGravity>().gravity;
     }
 
     if(pInput.up) {
+        pState.prevState = pState.state;
         pState.state = "run";  //TODO: change it to jumping when jumping is implemented
         pTransform.pos.y -= pTransform.velocity.y; //SFML y axis is postive downwards
     }
 
     if(pInput.left) {
+        pState.prevState = pState.state;
         pState.state = "run";
         pTransform.pos.x -= pTransform.velocity.x;
         pTransform.scale.x = -1.0;  //!this step assumes that sacle would we just 1 or -1 (otherwise the acutal scale value get overwritten)
     }
 
     if(pInput.right) {
+        pState.prevState = pState.state;
         pState.state = "run";  
         pTransform.pos.x += pTransform.velocity.x;
         pTransform.scale.x = 1.0;   //!this step assumes that sacle would we just 1 or -1 (otherwise the acutal scale value get overwritten)
@@ -168,7 +178,8 @@ void Scene_Play::sMovement() {
     }
 
     if(pInput.down) {
-        pState.state = "run";  //TODO: change it to jumping when jumping is implemented
+        pState.prevState = pState.state;
+        pState.state = "run";
         pTransform.pos.y += pTransform.velocity.y;
     }
 
@@ -225,7 +236,10 @@ void Scene_Play::sAnimation() {
 
     //TODO: set the aninmation opf the player based on its CState component
     //if player state has been set to running
-    if(player()->get<CState>().state == "run") {
+
+    auto& pState = player()->get<CState>();
+
+    if(pState.state == "run" && pState.prevState != "run") {
         //change its animation to repeating run animation 
         //NOTE: adding a component that already exists simply overwrites it
         //if the player is already in running animation and for each frame the below line sets the aniamtion to run
