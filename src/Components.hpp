@@ -69,9 +69,8 @@ class CGravity : public Component {
 class CState : public Component {
     public:
     std::string state = "jumping";
-    std::string prevState = "previousState";
     CState() = default;
-    CState(const std::string& s) : state(s), prevState(s) {}
+    CState(const std::string& s) : state(s) {}
 };
 
 static_assert(std::is_default_constructible_v<CTransform>);

@@ -157,20 +157,17 @@ void Scene_Play::sMovement() {
     }
 
     if(pInput.up) {
-        pState.prevState = pState.state;
         pState.state = "run";  //TODO: change it to jumping when jumping is implemented
         pTransform.pos.y -= pTransform.velocity.y; //SFML y axis is postive downwards
     }
 
     if(pInput.left) {
-        pState.prevState = pState.state;
         pState.state = "run";
         pTransform.pos.x -= pTransform.velocity.x;
         pTransform.scale.x = -1.0;  //!this step assumes that sacle would we just 1 or -1 (otherwise the acutal scale value get overwritten)
     }
 
     if(pInput.right) {
-        pState.prevState = pState.state;
         pState.state = "run";  
         pTransform.pos.x += pTransform.velocity.x;
         pTransform.scale.x = 1.0;   //!this step assumes that sacle would we just 1 or -1 (otherwise the acutal scale value get overwritten)
@@ -178,7 +175,6 @@ void Scene_Play::sMovement() {
     }
 
     if(pInput.down) {
-        pState.prevState = pState.state;
         pState.state = "run";
         pTransform.pos.y += pTransform.velocity.y;
     }
@@ -239,12 +235,14 @@ void Scene_Play::sAnimation() {
 
     auto& pState = player()->get<CState>();
 
-    if(pState.state == "run" && pState.prevState != "run") {
+    if(pState.state == "run" ) {
         //change its animation to repeating run animation 
         //NOTE: adding a component that already exists simply overwrites it
         //if the player is already in running animation and for each frame the below line sets the aniamtion to run
         //which means each frame it would only 1st frame of the runnings animation being applied
-        player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiRun"), true);
+        if( player()->get<CAnimation>().animation.getName()!= "SamuraiRun") {
+            player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiRun"), true);
+        }
     }
 
     // if(player()->get<CState>().state == "stand") {
