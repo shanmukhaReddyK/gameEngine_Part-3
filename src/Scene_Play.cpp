@@ -83,7 +83,7 @@ void Scene_Play::loadLevel(const std::string& levelpath){
     // block->add<CTransform>(Vec2f(300,480));
     block->add<CTransform>(gridToMidPixel( 2, 2, block));
     //add a bounding box , this will show up if press the 'C' key
-   block->add<CBoundingBox>(m_game.getAssets().getAnimation("Block2").getSize());
+    block->add<CBoundingBox>(m_game.getAssets().getAnimation("Block2").getSize());
    
 
     // auto block=m_entityManager.addEntity("tile");
@@ -228,7 +228,7 @@ void Scene_Play::sAnimation() {
     if(player()->get<CState>().state == "run") {
         //change its animation to repeating run animation 
         //NOTE: adding a component that already exists simply overwrites it
-        //if the player is already in running animation and for each frame the below animation sets the aniamtion to run
+        //if the player is already in running animation and for each frame the below line sets the aniamtion to run
         //which means each frame it would only 1st frame of the runnings animation being applied
         player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiRun"), true);
     }
