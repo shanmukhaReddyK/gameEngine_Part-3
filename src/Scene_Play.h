@@ -7,7 +7,7 @@
 class Scene_Play : public Scene {
 
     struct PlayerConfig {
-        float X,Y,CX,CY,SPEED,MAXSPEED,JUMP,GRAVITY;
+        float X,Y,CX,CY,SPEED,JUMP,MAXSPEED,GRAVITY;
         std::string WEAPON;
     };
 

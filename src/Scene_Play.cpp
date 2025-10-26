@@ -49,41 +49,58 @@ void Scene_Play::loadLevel(const std::string& levelpath){
     //TODO:: read in the file and add appropriate entities
     //      use playerConfig struct m_playerConfig to store player properties
     //      this struct is defined at the top of Scene_Play
-    // std::ifstream fin(levelpath);
+    std::ifstream fin(levelpath);
 
-    // if(!fin.is_open()) {
-    //     std::cerr<<"Error opening file "<< levelpath <<"\n";
-    // }
+    if(!fin.is_open()) {
+        std::cerr<<"Error opening file "<< levelpath <<"\n";
+    }
 
-    // std::string word;
+    std::string word;
 
-    // while(fin >> word) {
+    while(fin >> word) {
+        if(word=="Tile") {
+            std::string animationName;
+            float GX,GY;
+            auto brick = m_entityManager.addEntity("tile");
+            fin >> animationName >> GX >> GY;
+            //add animation
+            brick->add<CAnimation>(m_game.getAssets().getAnimation(animationName), true);
+
+            //add transform
+            brick->add<CTransform>(gridToMidPixel( GX, GY, brick));
+
+            //add bounding box
+            brick->add<CBoundingBox>(m_game.getAssets().getAnimation(animationName).getSize());
+        }
+
+        if(word == "Player") {
+            fin >> m_playerConfig.X >> m_playerConfig.Y >> m_playerConfig.CX >> m_playerConfig.CY >> m_playerConfig.SPEED >> m_playerConfig.JUMP >> m_playerConfig.MAXSPEED >> m_playerConfig.GRAVITY;
+        }
 
 
-
-    // }
+    }
     //NOTE::all of the code below is sample code which shows you how to set up and use entites with new syntax , it should be removed
 
     spawnPlayer(); 
 
-    //some sample entites
-    auto brick = m_entityManager.addEntity("tile");
-    //IMPORTANT: always add CAnimation first so that gridToMidPixel first so that it can compute the position required
-    brick->add<CAnimation>(m_game.getAssets().getAnimation("Brick1"), true);
-    // brick->add<CTransform>(Vec2f(224, 480));
-    //NOTE: you final code should position the entity with grid x,y position read from level.txt
-    brick->add<CTransform>(gridToMidPixel( 1, 2, brick));
+    // //some sample entites
+    // auto brick = m_entityManager.addEntity("tile");
+    // //IMPORTANT: always add CAnimation first so that gridToMidPixel first so that it can compute the position required
+    // brick->add<CAnimation>(m_game.getAssets().getAnimation("Brick1"), true);
+    // // brick->add<CTransform>(Vec2f(224, 480));
+    // //NOTE: you final code should position the entity with grid x,y position read from level.txt
+    // brick->add<CTransform>(gridToMidPixel( 1, 2, brick));
 
-    if(brick->get<CAnimation>().animation.getName() == "Brick1") {
-        //This could be a good way of identifying if a tile is brick!
-    }
+    // if(brick->get<CAnimation>().animation.getName() == "Brick1") {
+    //     //This could be a good way of identifying if a tile is brick!
+    // }
 
-    auto block = m_entityManager.addEntity("tile");
-    block->add<CAnimation>(m_game.getAssets().getAnimation("Block2"), true );
-    // block->add<CTransform>(Vec2f(300,480));
-    block->add<CTransform>(gridToMidPixel( 2, 2, block));
-    //add a bounding box , this will show up if press the 'C' key
-    block->add<CBoundingBox>(m_game.getAssets().getAnimation("Block2").getSize());
+    // auto block = m_entityManager.addEntity("tile");
+    // block->add<CAnimation>(m_game.getAssets().getAnimation("Block2"), true );
+    // // block->add<CTransform>(Vec2f(300,480));
+    // block->add<CTransform>(gridToMidPixel( 2, 2, block));
+    // //add a bounding box , this will show up if press the 'C' key
+    // block->add<CBoundingBox>(m_game.getAssets().getAnimation("Block2").getSize());
    
 
     // auto block=m_entityManager.addEntity("tile");
@@ -114,8 +131,8 @@ void Scene_Play::spawnPlayer() {
 
     auto player = m_entityManager.addEntity("player");
     player->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiStill"), true);
-    player->add<CTransform>(Vec2f(224,352));
-    player->add<CBoundingBox>(Vec2f(32,32));
+    player->add<CTransform>(gridToMidPixel(m_playerConfig.X, m_playerConfig.Y, player));
+    player->add<CBoundingBox>(Vec2f(m_playerConfig.CX, m_playerConfig.CY));
     player->add<CState>("stand");
     player->add<CInput>();
 

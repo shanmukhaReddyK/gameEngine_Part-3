@@ -1,7 +1,7 @@
 (GX,GY) is grid and (0,0) is the bottom left corner
 
 TILE ENTITY SPECIFICATION:
-TILE N GX GY
+Tile N GX GY
     Animation name  N           std:string (Animation asset name for the tile)
     GX Grid X pos   GX          float
     GY Grid Y pos   GY          float
