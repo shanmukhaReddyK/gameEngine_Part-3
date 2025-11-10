@@ -181,13 +181,13 @@ void Scene_Play::sMovement() {
     if(pInput.left) {
         pState.state = "run";
         pTransform.pos.x -= pTransform.velocity.x;
-        pTransform.scale.x = -1.0;  //!this step assumes that sacle would we just 1 or -1 (otherwise the acutal scale value get overwritten)
+        pTransform.scale.x = -1.0;  //!this step assumes that scale would we just 1 or -1 (otherwise the acutal scale value get overwritten)
     }
 
     if(pInput.right) {
         pState.state = "run";  
         pTransform.pos.x += pTransform.velocity.x;
-        pTransform.scale.x = 1.0;   //!this step assumes that sacle would we just 1 or -1 (otherwise the acutal scale value get overwritten)
+        pTransform.scale.x = 1.0;   //!this step assumes that scale would we just 1 or -1 (otherwise the acutal scale value get overwritten)
 
     }
 

@@ -13,7 +13,7 @@ class CTransform : public Component {
     Vec2f pos       = {0.0,0.0};
     Vec2f prevPos   = {0.0,0.0};
     Vec2f scale     = {1.0,1.0};
-    Vec2f velocity  = {10.0,10.0};
+    Vec2f velocity  = {5.0,5.0};
     float angle     = 0;
 
     CTransform()    = default;
