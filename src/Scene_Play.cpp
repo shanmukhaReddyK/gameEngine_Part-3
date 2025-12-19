@@ -4,6 +4,7 @@
 #include"GameEngine.h"
 #include"Scene_Menu.h"
 #include"Scene_Play.h"
+#include"Physics.hpp"
 
 Scene_Play::Scene_Play(GameEngine& gameEngine,const std::string& levelPath) : Scene(gameEngine), m_levelPath(levelPath) {
     init(m_levelPath);
@@ -68,6 +69,7 @@ void Scene_Play::loadLevel(const std::string& levelpath){
 
             //add transform
             brick->add<CTransform>(gridToMidPixel( GX, GY, brick));
+            brick->get<CTransform>().prevPos = brick->get<CTransform>().pos;
 
             //add bounding box
             brick->add<CBoundingBox>(m_game.getAssets().getAnimation(animationName).getSize());
@@ -152,7 +154,7 @@ void Scene_Play::update() {
 
     sMovement();
     // sLifespan();
-    // sCollision();
+    sCollision();
     sAnimation();
     sGUI();
     sRender();
@@ -168,7 +170,8 @@ void Scene_Play::sMovement() {
     auto& pInput     =      player()->get<CInput>();
     auto& pTransform =      player()->get<CTransform>();
     auto& pState     =      player()->get<CState>();
-
+    pTransform.prevPos = pTransform.pos;
+    
     if(player()->has<CGravity>()) {
         pTransform.velocity.y += player()->get<CGravity>().gravity;
     }
@@ -216,10 +219,52 @@ void Scene_Play::sCollision() {
         TODO: Implement Physics::GetOverlap() function and use it here
         TODO: Implement bullet tiles collision, destroy the tile if it has a brick animation
         TODO: Implement player/tile collison and resolutions
-              update the CState component of the player to store weather it is currently on the ground or in the air. this will be used by the animation system
+        update the CState component of the player to store weather it is currently on the ground or in the air. this will be used by the animation system
         TODO: Check to see if the player has fallen down a hole (y>heigth())
         TODO: Dont let the player walk off the left side of the map 
     */
+    Vec2f overlap ={0.0f,0.0f};
+    Vec2f preOverlap ={0.0f,0.0f};
+    for (auto& tile: m_entityManager.getEntities("tile")) {
+        //every tile has a bounding box. In game we have decorations, tiles and player (for now there are no enemies)
+        //collison detection if overlap.x and .y both are positive we will have a collison and if either of them is negative then we dont(they would be seperated)
+        overlap = Physics::GetOverlap(player(),tile);
+        
+        //*collision resolution if both are positive
+        if(overlap.x > 0 && overlap.y > 0) {
+            // //*detecting collision directions using previous overlap
+            preOverlap = Physics::GetPreviousOverlap(player(),tile);
+            auto& ptransform = player()->get<CTransform>();
+
+            // //?if previous overlap.x > 0 and overlap.y < 0 then player may have came from top or bottom
+            if(preOverlap.x > 0 && preOverlap.y <= 0) {
+                //?if previous y co-ordinate is higher than current, it would have come from bottom(in SFML co-ordinate system)
+                if(ptransform.prevPos.y >= ptransform.pos.y) {
+                    ptransform.pos.y += overlap.y; 
+                }
+
+                //?if previous y co-ordinate is lower than current, it would have come from top(in SFML co-ordinate system)
+                else {
+                    ptransform.pos.y -= overlap.y;
+                }
+            }
+            
+            //?if previous overlap.y > 0 and overlap.x < 0 then player may have came from left or right
+            if(preOverlap.x <= 0 && preOverlap.y > 0) {
+                //?if previous x co-ordinate is higher than current, it would have come from right(in SFML co-ordinate system)
+                if(ptransform.prevPos.x >= ptransform.pos.x) {
+                    ptransform.pos.x += overlap.x; 
+                }
+
+                //?if previous x co-ordinate is lower than current, it would have come from left(in SFML co-ordinate system)
+                else {
+                    ptransform.pos.x -= overlap.x; 
+                }
+            }
+            
+            //?tricky one is if previous overlap.y < 0 and overlap.x < 0 then player may have came in diagonal direction
+        }
+    }
 }
 
 void Scene_Play::sDoAction(const Action& action) {
