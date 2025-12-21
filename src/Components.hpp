@@ -38,7 +38,7 @@ class CInput : public Component {
     bool down = false;
     bool shoot = false;
     bool canShoot = true;
-    bool canJump = true;
+    bool canJump = false;
 
     CInput() = default;
 };

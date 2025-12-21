@@ -37,8 +37,7 @@ Vec2f Scene_Play::gridToMidPixel(float x, float y, std::shared_ptr<Entity> entit
     
     //remember that SFML has (0,0) in the top left, while grid co ordinates are specified from bottom left
     //you can get the size of the SFML window via m_game.window().getSize();
-    //* could also use bounding box half size if the bounding box is added before transform pos gets added
-    //* beacuse here we are using sprite's size to set compute the loaction, but in some cases the bounding box size need not be same as sprite's size
+    //here we are using sprite's size to set compute the loaction, but in some cases the bounding box size need not be same as sprite's size
     float midX = x*m_gridSize.x+ entity->get<CBoundingBox>().halfSize.x; 
     float midY = m_game.window().getSize().y-( y * m_gridSize.y + entity->get<CBoundingBox>().halfSize.y);
     return Vec2f(midX,midY);
@@ -48,9 +47,9 @@ void Scene_Play::loadLevel(const std::string& levelpath){
     //reset the entity manager everytime we load a level
     m_entityManager = EntityManager();
 
-    //TODO:: read in the file and add appropriate entities
-    //      use playerConfig struct m_playerConfig to store player properties
-    //      this struct is defined at the top of Scene_Play
+    //read in the file and add appropriate entities
+    //usees playerConfig struct m_playerConfig to store player properties
+    //this struct is defined at the top of Scene_Play
     std::ifstream fin(levelpath);
 
     if(!fin.is_open()) {
@@ -134,11 +133,12 @@ void Scene_Play::spawnPlayer() {
     */
 
     auto player = m_entityManager.addEntity("player");
-    player->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiStill"), true);
+    player->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiAir"), true);
     player->add<CBoundingBox>(Vec2f(m_playerConfig.CX, m_playerConfig.CY));
     player->add<CTransform>(gridToMidPixel(m_playerConfig.X, m_playerConfig.Y, player));
-    player->add<CState>("stand");
+    player->add<CState>("jump");
     player->add<CInput>();
+    player->add<CGravity>(m_playerConfig.GRAVITY);
 
     //TODO: be sure to add the remaining components to the player
     // be sure to destory the dead player if we are respawning
@@ -178,29 +178,50 @@ void Scene_Play::sMovement() {
         pTransform.velocity.y += player()->get<CGravity>().gravity;
     }
 
-    if(pInput.up) {
-        pState.state = "run";  //TODO: change it to jumping when jumping is implemented
-        pTransform.pos.y -= pTransform.velocity.y; //SFML y axis is postive downwards
+    // in air
+    if(!pInput.canJump) {
+        pState.state="jump";
+
+        if(pInput.left) {
+            pTransform.pos.x -= pTransform.velocity.x;
+            pTransform.scale.x = -1.0;  //!this step assumes that scale would we just 1 or -1 (otherwise the acutal scale value get overwritten)
+        }
+
+        if(pInput.right) {
+            pTransform.pos.x += pTransform.velocity.x;
+            pTransform.scale.x = 1.0;   //!this step assumes that scale would we just 1 or -1 (otherwise the acutal scale value get overwritten)
+
+        }
     }
 
-    if(pInput.left) {
-        pState.state = "run";
-        pTransform.pos.x -= pTransform.velocity.x;
-        pTransform.scale.x = -1.0;  //!this step assumes that scale would we just 1 or -1 (otherwise the acutal scale value get overwritten)
+    //on Ground
+    else {
+        pState.state="stand";
+
+        //we move or run only if either its moving left or right
+        if(pInput.right ^ pInput.left) {
+            pState.state = "run";
+            
+            if(pInput.left) {
+                pTransform.pos.x -= pTransform.velocity.x;
+                pTransform.scale.x = -1.0;  //!this step assumes that scale would we just 1 or -1 (otherwise the acutal scale value get overwritten)
+            }
+
+            if(pInput.right) {
+                pTransform.pos.x += pTransform.velocity.x;
+                pTransform.scale.x = 1.0;   //!this step assumes that scale would we just 1 or -1 (otherwise the acutal scale value get overwritten)
+            }
+        }
+        //on ground if running cases
+        
+
+        if(pInput.up) {
+            pTransform.velocity.y = m_playerConfig.JUMP; //SFML y axis is postive downwards
+        }
     }
 
-    if(pInput.right) {
-        pState.state = "run";  
-        pTransform.pos.x += pTransform.velocity.x;
-        pTransform.scale.x = 1.0;   //!this step assumes that scale would we just 1 or -1 (otherwise the acutal scale value get overwritten)
-
-    }
-
-    if(pInput.down) {
-        pState.state = "run";
-        pTransform.pos.y += pTransform.velocity.y;
-    }
-
+    //The gravity causes acclerations in y direction no matter what, so we must compute or update the y component of pos and velocity through out whole game
+    pTransform.pos.y += pTransform.velocity.y;
     //TODO: reset player state to "stand" when he is not moving
     
     //NOTE: Setting an Entity scale.x to -1/1 will make it face to the left/right
@@ -218,15 +239,17 @@ void Scene_Play::sCollision() {
                   Also, something BELOW something else will have a y value greater than it
                   also, somthing ABOVE something else will have a y value less than it
 
-        TODO: Implement Physics::GetOverlap() function and use it here
+        Uses Physics::GetOverlap() function and use it here
         TODO: Implement bullet tiles collision, destroy the tile if it has a brick animation
-        TODO: Implement player/tile collison and resolutions
+        player/tile collison and resolutions
         update the CState component of the player to store weather it is currently on the ground or in the air. this will be used by the animation system
         TODO: Check to see if the player has fallen down a hole (y>heigth())
         TODO: Dont let the player walk off the left side of the map 
     */
+
     Vec2f overlap ={0.0f,0.0f};
     Vec2f preOverlap ={0.0f,0.0f};
+    player()->get<CInput>().canJump = false;
     for (auto& tile: m_entityManager.getEntities("tile")) {
         //every tile has a bounding box. In game we have decorations, tiles and player (for now there are no enemies)
         //collison detection if overlap.x and .y both are positive we will have a collison and if either of them is negative then we dont(they would be seperated)
@@ -242,12 +265,17 @@ void Scene_Play::sCollision() {
             if(preOverlap.x > 0 && preOverlap.y <= 0) {
                 //?if previous y co-ordinate is higher than current, it would have come from bottom(in SFML co-ordinate system)
                 if(ptransform.prevPos.y >= ptransform.pos.y) {
-                    ptransform.pos.y += overlap.y; 
+                    ptransform.pos.y += overlap.y;
+                    //vertical velocity becomes zero whenever it hits the roof from bottom 
+                    ptransform.velocity.y = 0; 
                 }
 
                 //?if previous y co-ordinate is lower than current, it would have come from top(in SFML co-ordinate system)
                 else {
                     ptransform.pos.y -= overlap.y;
+                    //vertical velocity becomes zero whenever it hits the ground from top 
+                    ptransform.velocity.y = 0;
+                    player()->get<CInput>().canJump = true;
                 }
             }
             
@@ -296,10 +324,18 @@ void Scene_Play::sAnimation() {
 
     //TODO: set the aninmation opf the player based on its CState component
     //if player state has been set to running
-
+    //
     auto& pState = player()->get<CState>();
 
-    if(pState.state == "run" ) {
+    
+    if(pState.state == "jump") {
+        //only change the animation when transitioning from one state to another
+        if( player()->get<CAnimation>().animation.getName()!= "SamuraiAir") {
+            player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiAir"), true);
+        }
+    }
+
+    else if (pState.state == "run") {
         //change its animation to repeating run animation 
         //NOTE: adding a component that already exists simply overwrites it
         //if the player is already in running animation and for each frame the below line sets the aniamtion to run
@@ -309,17 +345,11 @@ void Scene_Play::sAnimation() {
         }
     }
 
-    // if(player()->get<CState>().state == "stand") {
-    //     //change its animation to repeating run animation 
-    //     //NOTE: adding a component that already exists simply overwrites it
-    //     player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiStill"), true);
-    // }
-
-    // if(player()->get<CState>().state == "jump") {
-    //     //change its animation to repeating run animation 
-    //     //NOTE: adding a component that already exists simply overwrites it
-    //     player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiAir"), true);
-    // }
+    else {
+        if( player()->get<CAnimation>().animation.getName()!= "SamuraiStill") {
+            player()->add<CAnimation>(m_game.getAssets().getAnimation("SamuraiStill"), true);
+        }
+    }
 
 
     //TODO: for each entity with an animation, call entity->get<CAnimation>().animation.update()
