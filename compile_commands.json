@@ -1,0 +1,67 @@
+[
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/GameEngine.cpp",
+    "file": "src/GameEngine.cpp"
+  }
+,
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/main.cpp",
+    "file": "src/main.cpp"
+  }
+,
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/Scene.cpp",
+    "file": "src/Scene.cpp"
+  }
+,
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/Scene_Menu.cpp",
+    "file": "src/Scene_Menu.cpp"
+  }
+,
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/Scene_Play.cpp",
+    "file": "src/Scene_Play.cpp"
+  }
+,
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/imgui/imgui.cpp",
+    "file": "src/imgui/imgui.cpp"
+  }
+,
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/imgui/imgui_demo.cpp",
+    "file": "src/imgui/imgui_demo.cpp"
+  }
+,
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/imgui/imgui_draw.cpp",
+    "file": "src/imgui/imgui_draw.cpp"
+  }
+,
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/imgui/imgui-SFML.cpp",
+    "file": "src/imgui/imgui-SFML.cpp"
+  }
+,
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/imgui/imgui_tables.cpp",
+    "file": "src/imgui/imgui_tables.cpp"
+  }
+,
+  {
+    "directory": "/home/bunnybyte/projects/gameEngine_Part-3",
+    "command": "g++ -c -O3 -std=c++20 -Wno-unused-result -Wno-deprecated-declarations -Wno-reoder -I./src -I ./src/imgui -I ./external/ src/imgui/imgui_widgets.cpp",
+    "file": "src/imgui/imgui_widgets.cpp"
+  }
+]

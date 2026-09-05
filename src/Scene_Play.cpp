@@ -416,9 +416,9 @@ void Scene_Play::sRender() {
 
     //set up the viewport of the window to be centred to the player
     auto &pPos = player()->get<CTransform>().pos;
-    float windowCentreX = std::max((int)m_game.window().getSize().x/2,(int) pPos.x);
+    float windowCentreX = std::max(m_game.window().getSize().x/2.0f, pPos.x);
     sf::View view = m_game.window().getView();
-    view.setCenter({windowCentreX,m_game.window().getSize().y-view.getCenter().y});
+    view.setCenter({windowCentreX, m_game.window().getSize().y/2.0f});
     m_game.window().setView(view);
 
     // Draw all the entity texture
@@ -462,7 +462,7 @@ void Scene_Play::sRender() {
         auto width = [this]() {return m_game.window().getSize().x;};
         auto height = [this]() {return m_game.window().getSize().y;};
 
-        float leftX = m_game.window().getView().getCenter().x -width()/2-m_gridSize.x;
+        float leftX = m_game.window().getView().getCenter().x - width()/2.0f - m_gridSize.x;
         float rightX = leftX + width() + m_gridSize.x;
         float nextGridX = leftX - ((int)leftX % (int)m_gridSize.x);
 

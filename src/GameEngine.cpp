@@ -11,8 +11,9 @@ GameEngine::GameEngine(const std::string& assetConfig){
 void GameEngine::init(const std::string& assetConfig){
     m_assets.loadFromfile(assetConfig);
 
-    m_window.create(sf::VideoMode({1280,760}), "SFML_Window");
+    m_window.create(sf::VideoMode({1000,1000}), "SFML_Window");
     m_window.setFramerateLimit(60);
+    m_window.setVerticalSyncEnabled(false);
 
     ImGui::SFML::Init(m_window);
 
